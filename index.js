@@ -17,6 +17,10 @@ app.post("/api/login", (req, res) => {
     res.json({ ok: true });
 });
 
+app.get("/api/users", (req, res) => {
+    res.json(users);
+});
+
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT);
