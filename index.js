@@ -12,8 +12,7 @@ app.get("/", (req, res) => {
 
 app.get("/api/test", (req, res) => {
     res.json({
-        status: "ok",
-        message: "API working"
+        status: "ok"
     });
 });
 
