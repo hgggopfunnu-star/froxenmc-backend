@@ -18,7 +18,11 @@ let servers = [];
 /* ---------- TEST ---------- */
 
 app.get("/api/test", (req, res) => {
-    res.json({ status: "ok" });
+
+    res.json({
+        status: "ok"
+    });
+
 });
 
 
@@ -36,8 +40,11 @@ app.post("/api/login", (req, res) => {
 });
 
 
+
 app.get("/api/users", (req, res) => {
+
     res.json(users);
+
 });
 
 
@@ -49,9 +56,11 @@ app.post("/api/create", (req, res) => {
     const { name, ram, version } = req.body;
 
     if (!name) {
+
         return res.json({
             message: "Name required"
         });
+
     }
 
     const server = {
@@ -91,10 +100,70 @@ app.get("/api/servers", (req, res) => {
 
 
 
-/* ---------- START ---------- */
+/* ---------- START SERVER ---------- */
+
+app.get("/api/start/:name", (req, res) => {
+
+    const name = req.params.name;
+
+    const s = servers.find(
+        x => x.name === name
+    );
+
+    if (!s) {
+
+        return res.json({
+            message: "Not found"
+        });
+
+    }
+
+    s.status = "running";
+
+    res.json({
+        message: "Started",
+        server: s
+    });
+
+});
+
+
+
+/* ---------- STOP SERVER ---------- */
+
+app.get("/api/stop/:name", (req, res) => {
+
+    const name = req.params.name;
+
+    const s = servers.find(
+        x => x.name === name
+    );
+
+    if (!s) {
+
+        return res.json({
+            message: "Not found"
+        });
+
+    }
+
+    s.status = "offline";
+
+    res.json({
+        message: "Stopped",
+        server: s
+    });
+
+});
+
+
+
+/* ---------- PORT ---------- */
 
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-    console.log("Backend running");
+
+    console.log("Backend running on " + PORT);
+
 });
