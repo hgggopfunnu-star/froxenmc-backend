@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const { spawn } = require("child_process");
 
 const app = express();
 
@@ -12,6 +13,7 @@ app.use(express.json());
 
 let users = [];
 let servers = [];
+let processes = {};
 
 
 
@@ -118,11 +120,27 @@ app.get("/api/start/:name", (req, res) => {
 
     }
 
+    if (processes[name]) {
+
+        return res.json({
+            message: "Already running"
+        });
+
+    }
+
+    // fake process (safe for railway)
+
+    const proc = spawn(
+        "node",
+        ["-e", "setInterval(()=>{},1000)"]
+    );
+
+    processes[name] = proc;
+
     s.status = "running";
 
     res.json({
-        message: "Started",
-        server: s
+        message: "Started"
     });
 
 });
@@ -147,11 +165,20 @@ app.get("/api/stop/:name", (req, res) => {
 
     }
 
+    const p = processes[name];
+
+    if (p) {
+
+        p.kill();
+
+        delete processes[name];
+
+    }
+
     s.status = "offline";
 
     res.json({
-        message: "Stopped",
-        server: s
+        message: "Stopped"
     });
 
 });
@@ -164,6 +191,8 @@ const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
 
-    console.log("Backend running on " + PORT);
+    console.log(
+        "Backend running on " + PORT
+    );
 
 });
